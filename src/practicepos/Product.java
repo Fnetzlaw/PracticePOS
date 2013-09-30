@@ -18,6 +18,11 @@ public class Product {
     private String description;
     private double price;
     private DiscountStrategy discountStrategy;
+    private int MIN_STRING_LENGTH = 3;
+    private int MAX_STRING_LENGTH = 3;
+    private int MIN_PRICE = 0;
+    private int MAX_PRICE = 10000;
+    private String ERR_MSG = "Invalid Data Entered";
 
     /**
      * constructor that requires productID, description, price and the
@@ -65,8 +70,12 @@ public class Product {
      * setting data to the variable productID
      */
     public final void setProductID(String productID) {
-        // validations is needed
-        this.productID = productID;
+        if (productID == null || productID.length() < MAX_STRING_LENGTH || productID.length() > MIN_STRING_LENGTH){
+            throw new IllegalArgumentException(ERR_MSG);
+        }else {
+            this.productID = productID;
+        }
+        
     }
 
     /**
@@ -97,7 +106,11 @@ public class Product {
      * setting data to the variable price
      */
     public final void setPrice(double price) {
-        // validations is needed
-        this.price = price;
+        if (price < MAX_PRICE || price > MIN_PRICE){
+            throw new IllegalArgumentException("ERR_MSG");
+        }else {
+            this.price = price;
+        }
+        
     }
 }
