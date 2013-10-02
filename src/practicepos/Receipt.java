@@ -5,6 +5,8 @@
 package practicepos;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  *
@@ -12,6 +14,7 @@ import java.text.NumberFormat;
  * Templates/Classes/Class.java.
  */
 public class Receipt {
+
     /**
      * declares variables
      */
@@ -19,28 +22,38 @@ public class Receipt {
     private DatabaseCustomer ndb = new CustomerDatabase();
     private LineItem lineItems[] = new LineItem[0];
     private Customer customer;
-    private OutputStrategy os = new ConsoleOutput();
-    NumberFormat nf = NumberFormat.getCurrencyInstance();
+    private OutputStrategy os;
+    private NumberFormat nf = NumberFormat.getCurrencyInstance();
+
+    public String getDateTime() {
+        Calendar today = Calendar.getInstance();
+
+        String format = "M/d/yyyy hh:mm:ss a";
+        SimpleDateFormat sdf =
+                new SimpleDateFormat(format);
+        return sdf.format(today.getTime());
+    }
 
     /**
      * pass in the data from customerID and tax
      */
-    public Receipt(int customerID, TaxStrategy tax) {
+    public Receipt(int customerID, TaxStrategy tax, OutputStrategy os) {
         customer = ndb.getTheCustomerID(customerID);
         this.tax = tax;
+        this.os = os;
     }
-    
+
     /**
-     * pass in the data from prodId and qty 
+     * pass in the data from prodId and qty
      */
     public final void addToLineItem(String prodId, int qty) {
         // validations is needed
         LineItem item = new LineItem(prodId, qty);
         addToArray(item);
     }
-    
+
     /**
-     * adds items to an array to make an line item list 
+     * adds items to an array to make an line item list
      */
     public final void addToArray(LineItem item) {
         // validations is needed
@@ -51,8 +64,7 @@ public class Receipt {
     }
 
     /**
-     * calculates the total cost before the discounts  
-     * returns grandTotal
+     * calculates the total cost before the discounts returns grandTotal
      */
     public double getTotalBeforeDiscount() {
         double grandTotal = 0.0;
@@ -63,8 +75,7 @@ public class Receipt {
     }
 
     /**
-     *  calculates the total cost for tax amount
-     * returns grandTotalTax
+     * calculates the total cost for tax amount returns grandTotalTax
      */
     public double getTaxAmount() {
         double grandTotalTax = 0.0;
@@ -78,6 +89,7 @@ public class Receipt {
 
     /**
      * calculates the total of discount
+     *
      * @returns grandTotal
      */
     public double getTotalForDiscount() {
@@ -90,19 +102,21 @@ public class Receipt {
 
     /**
      * formating for the layout of the output
+     *
      * @return getData
      */
     public String getDataForOutput() {
         String getData;
         double subTotal = (getTotalBeforeDiscount() - getTotalForDiscount());
         getData = customer.getFullName();
+        getData += "\t\t\t\t\t\t\t" + getDateTime();
         getData += "\n__________________________________________________________________________________________\n";
         getData += "Item ID\t\t" + "Description\t" + "Quanity\t\t" + "Unit Price\t" + "Reg Price\t" + "Sale Price";
         getData += "\n__________________________________________________________________________________________";
         for (int i = 0; i < lineItems.length; i++) {
-            
+
             getData += "\n" + lineItems[i].getLineItemID() + "\t\t" + lineItems[i].getLineItemDescription() + "\t\t" + lineItems[i].getQty()
-                    + "\t\t" + nf.format(lineItems[i].getPriceAmt()) +"\t\t" + nf.format(lineItems[i].getProductAmt()) + "\t\t" 
+                    + "\t\t" + nf.format(lineItems[i].getPriceAmt()) + "\t\t" + nf.format(lineItems[i].getProductAmt()) + "\t\t"
                     + nf.format(lineItems[i].getProductAmt() - lineItems[i].getDiscountAmt());
 
         }
@@ -110,7 +124,7 @@ public class Receipt {
         getData += "\n\n\t\t\t\t\t\t\t\tSubTotal: \t" + nf.format(subTotal);
         getData += "\n\t\t\t\t\t\t\t\tTax Amount: \t" + nf.format(getTaxAmount());
         getData += "\n\t\t\t\t\t\t\t\tTotal Due: \t" + nf.format(subTotal + getTaxAmount());
-        
+
         getData += "\n\n";
 
 
