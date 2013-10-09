@@ -15,8 +15,8 @@ public class Startup {
      */
     public static void main(String[] args) {
         
-        OutputStrategy output = new ConsoleOutput();
-        TaxStrategy tax = new WisconsinTaxStrategy();
+        TaxStrategy tax = AbstractFactory.getTaxInstance(AbstractFactory.Taxs.WI);
+        OutputStrategy output = AbstractFactory.getOutputInstance(AbstractFactory.Outputs.GUI);
         
         CashRegister cr = new CashRegister();
         cr.startNewSale(100, tax, output);
